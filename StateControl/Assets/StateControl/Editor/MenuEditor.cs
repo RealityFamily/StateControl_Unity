@@ -30,6 +30,7 @@ public class MenuEditor : MonoBehaviour
             stateObj.name = "States";
             stateObj.tag = "States";
             stateObj.AddComponent<WebConnection>();
+            DontDestroyOnLoad(stateObj);
         } else
         {
             EditorUtility.DisplayDialog("Warning", "State List is already on scene.\nOpen State Editor.", "Ok");
