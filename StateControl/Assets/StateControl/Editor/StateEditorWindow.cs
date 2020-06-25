@@ -45,12 +45,12 @@ public class StateEditorWindow : EditorWindow
 
         EditorGUILayout.Space();
 
-        GUILayout.Label("Server URL:");
+        GUILayout.Label("Server URL (without protocol):");
         _webConnection.BaseURL = EditorGUILayout.TextField(_webConnection.BaseURL);
 
         EditorGUILayout.Space();
 
-        statesOpend = EditorGUILayout.Foldout(statesOpend, "Game States:", true);
+        statesOpend = EditorGUILayout.Foldout(statesOpend, "States:", true);
         EditorGUI.indentLevel++;
         if (statesOpend)
         {

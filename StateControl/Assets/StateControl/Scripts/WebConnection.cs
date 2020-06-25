@@ -5,7 +5,6 @@ using WebSocketSharp;
 using UnityEngine;
 using System.Threading;
 
-[ExecuteInEditMode]
 public class WebConnection : MonoBehaviour
 {
     public delegate void StateDelegate();
@@ -29,7 +28,7 @@ public class WebConnection : MonoBehaviour
     }
     public StateDelegate GetValue(string key)
     {
-        return Values[Keys.IndexOf(key)];
+        return Keys.IndexOf(key) > -1 ? Values[Keys.IndexOf(key)] : null;
     }
     public string GetKey(int index)
     {
@@ -63,6 +62,8 @@ public class WebConnection : MonoBehaviour
 
     public string BaseURL;
 
+    private WebSocket ws;
+
     private void Awake()
     {
         // АХТУНГ!!!!! ЦЕ КОСТЫЛИЩЕ!!!!! ПЕРЕДЕЛАТЬ!!!!
@@ -76,29 +77,27 @@ public class WebConnection : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     { 
-        
         if (!string.IsNullOrWhiteSpace(BaseURL)) {
-            using (WebSocket ws = new WebSocket(BaseURL))
-            {
-                ws.OnMessage += Ws_OnMessage;
-                ws.Connect();
+            ws = new WebSocket("ws://" + BaseURL + "/GameControl");
+            ws.OnMessage += Ws_OnMessage;
+            ws.Connect();
 
-                ws.Send(JsonUtility.ToJson(new
-                {
-                    GameName
-                }));
-            }
+            ws.Send("Hello");
         }
+    }
 
-        new Thread(() => {
-            Thread.Sleep(50);
-                GetValue("Reload").Invoke();
-        }).Start();
+    private void OnDestroy()
+    {
+        ws.Close();
     }
 
     private void Ws_OnMessage(object sender, MessageEventArgs e)
     {
-        throw new NotImplementedException();
+        Debug.Log(e.Data.ToString());
+        if (Keys.Contains(e.Data.ToString()))
+        {
+
+        } 
     }
 
     // Update is called once per frame

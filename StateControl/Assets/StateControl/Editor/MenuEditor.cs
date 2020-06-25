@@ -40,8 +40,7 @@ public class MenuEditor : MonoBehaviour
     [MenuItem(MENU_ITEM_BUILD_AND_SEND, false, 40)]
     static void Build_And_Send()
     {
-        EditorUtility.DisplayDialog("Not supported", "Pack and send not supported yet", "Ok");
-        return;
+        EditorWindow.GetWindow<PackAndSendWindow>("Pack and Send");
     }
 }
 

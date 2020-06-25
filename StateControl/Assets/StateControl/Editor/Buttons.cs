@@ -14,4 +14,9 @@ public class Buttons
     {
         return GUILayout.Button("+");
     }
+
+    public static bool PackAndSend()
+    {
+        return GUILayout.Button("Pack and Send");
+    }
 }
