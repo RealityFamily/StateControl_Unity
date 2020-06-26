@@ -61,6 +61,13 @@ public class WebConnection : MonoBehaviour
             Values[Keys.IndexOf(key)] -= value;
         }
     }
+    private void InvokeDelegate(string State)
+    {
+        if (ContainsKey(State))
+        {
+            Values[Keys.IndexOf(State)]?.Invoke();
+        }
+    }
 
     public string BaseURL;
 
@@ -99,11 +106,13 @@ public class WebConnection : MonoBehaviour
 
     private void Ws_OnMessage(object sender, MessageEventArgs e)
     {
-        Debug.Log(e.Data.ToString());
         var json = JObject.Parse(e.Data.ToString());
-        if ()
+        if (json.ContainsKey("DeviceId") && json.ContainsKey("GameName") && json.ContainsKey("State"))
         {
-            
+            if (DeviceName == json["DeviceId"].ToString() && GameName == json["GameName"].ToString())
+            {
+                InvokeDelegate(json["State"].ToString());
+            }
         } else if (json.ContainsKey("DeviceName"))
         {
             DeviceName = json["DeviceName"].ToString();
