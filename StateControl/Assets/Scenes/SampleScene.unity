@@ -335,6 +335,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c3f08e7745bfad4ebff3b1c618b6207, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DeviceName: 
+  GameName: Test
+  Keys:
+  - Start
+  BaseURL: localhost:8080
 --- !u!4 &1146212723
 Transform:
   m_ObjectHideFlags: 0

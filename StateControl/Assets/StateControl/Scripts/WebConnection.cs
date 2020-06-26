@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using WebSocketSharp;
 using UnityEngine;
 using System.Threading;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 public class WebConnection : MonoBehaviour
 {
@@ -67,6 +69,7 @@ public class WebConnection : MonoBehaviour
     private void Awake()
     {
         // АХТУНГ!!!!! ЦЕ КОСТЫЛИЩЕ!!!!! ПЕРЕДЕЛАТЬ!!!!
+        Values.Clear();
         foreach (var key in Keys)
         {
             Values.Add(delegate { });
@@ -82,7 +85,10 @@ public class WebConnection : MonoBehaviour
             ws.OnMessage += Ws_OnMessage;
             ws.Connect();
 
-            ws.Send("Hello");
+            ws.Send(JsonConvert.SerializeObject(new
+            {
+                Game = GameName
+            }));
         }
     }
 
@@ -94,10 +100,14 @@ public class WebConnection : MonoBehaviour
     private void Ws_OnMessage(object sender, MessageEventArgs e)
     {
         Debug.Log(e.Data.ToString());
-        if (Keys.Contains(e.Data.ToString()))
+        var json = JObject.Parse(e.Data.ToString());
+        if ()
         {
-
-        } 
+            
+        } else if (json.ContainsKey("DeviceName"))
+        {
+            DeviceName = json["DeviceName"].ToString();
+        }
     }
 
     // Update is called once per frame

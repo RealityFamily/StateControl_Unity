@@ -152,8 +152,6 @@ public class PackAndSendWindow : EditorWindow
                 statesList = states
             });
 
-            Debug.Log(json);
-
             HttpClient client = new HttpClient();
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "http://" + _webConnection.BaseURL + "/api/add_states/add");

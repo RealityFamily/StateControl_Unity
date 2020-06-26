@@ -24,6 +24,11 @@ public class StateEditorWindow : EditorWindow
         {
             _webConnection = states.GetComponent<WebConnection>();
             DrawStateEditor();
+
+            if (GUI.changed)
+            {
+                EditorUtility.SetDirty(_webConnection);
+            }
         } else
         {
             DrawStateListError();
@@ -89,7 +94,7 @@ public class StateEditorWindow : EditorWindow
             if (Buttons.Add())
             {
                 if (!_webConnection.ContainsKey("")) {
-                    _webConnection.Add(""/*, delegate { }*/);
+                    _webConnection.Add("");
                     _errorMessage = "";
                 } else
                 {
