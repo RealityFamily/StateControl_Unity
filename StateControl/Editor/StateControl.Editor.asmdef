@@ -1,10 +1,12 @@
 {
-    "name": "ru.realityfamily.statecontrol.root",
-    "references": [],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+    "name": "StateControl.Editor",
+    "references": [
+        "StateControl.Runtime"
     ],
-    "includePlatforms": [],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
