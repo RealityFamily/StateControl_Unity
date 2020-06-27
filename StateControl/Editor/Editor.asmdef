@@ -1,7 +1,8 @@
 {
-    "name": "Editor",
+    "name": "ru.realityfamily.statecontrol.editor",
     "references": [
-        "root"
+        "root",
+        "ru.realityfamily.statecontrol.root"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [
