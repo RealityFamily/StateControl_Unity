@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
 using System;
+using System.Linq;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -20,7 +21,7 @@ public class PackAndSendWindow : EditorWindow
     private List<string> serverStates = new List<string>();
     private bool serverStatesOpend;
 
-    private void Awake()
+    private void OnFocus()
     {
         var states = GameObject.FindGameObjectWithTag("States");
         if (states != null)
@@ -28,7 +29,7 @@ public class PackAndSendWindow : EditorWindow
             _webConnection = states.GetComponent<WebConnection>();
 
             reloadServerInfo();
-        }        
+        }
     }
 
     private async void reloadServerInfo()
@@ -138,30 +139,52 @@ public class PackAndSendWindow : EditorWindow
         EditorGUILayout.EndScrollView();
         GUILayout.Space(20);
 
-        if (Buttons.PackAndSend())
-        {
-            List<string> states = new List<string>();
-            for (int i = 0; i < _webConnection.GetLenght(); i++)
+        if (!CheckUniq()) {
+            if (Buttons.PackAndSend())
             {
-                states.Add(_webConnection.GetKey(i));
+                List<string> states = new List<string>();
+                for (int i = 0; i < _webConnection.GetLenght(); i++)
+                {
+                    states.Add(_webConnection.GetKey(i));
+                }
+
+                var json = JsonConvert.SerializeObject(new
+                {
+                    gameName = _webConnection.GameName,
+                    statesList = states
+                });
+
+                HttpClient client = new HttpClient();
+
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "http://" + _webConnection.BaseURL + "/api/add_states/add");
+                request.Content = new StringContent(json);
+                request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                var response = await client.SendAsync(request);
+
+                reloadServerInfo();
             }
+        } else
+        {
+            GUIStyle style = new GUIStyle();
+            style.normal.textColor = Color.green;
+            style.fontSize = 17;
+            style.alignment = TextAnchor.MiddleCenter;
 
-            var json = JsonConvert.SerializeObject(new
-            {
-                gameName = _webConnection.GameName,
-                statesList = states
-            });
-
-            HttpClient client = new HttpClient();
-
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "http://" + _webConnection.BaseURL + "/api/add_states/add");
-            request.Content = new StringContent(json);
-            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-            var response = await client.SendAsync(request);
-
-            reloadServerInfo();
+            GUILayout.Label("All up to date!", style);
         }
+    }
+
+    private bool CheckUniq()
+    {
+        List<string> states = new List<string>();
+
+        for(int i = 0; i < _webConnection.GetLenght(); i++)
+        {
+            states.Add(_webConnection.GetKey(i));
+        }
+
+        return states.SequenceEqual(serverStates);
     }
 }
 #endif
