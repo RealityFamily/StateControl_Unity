@@ -1,0 +1,19 @@
+{
+    "name": "ru.realityfamily.statecontrol",
+    "displayName": "State Control",
+    "version": "0.1.0",
+    "unity": "2018.4",
+    "author" : {
+      "name" : "Leonid Sheshukov",
+      "email": "realityfamilyteam@yandex.ru"
+    },
+    "description": "Tool for creating remote control",
+    "dependencies": {
+      "com.unity.textmeshpro": "2.0.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/RealityFamily/StateControl_Unity.git"
+    },
+    "hideInEditor": false
+  }
