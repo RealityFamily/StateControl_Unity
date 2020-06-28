@@ -3,10 +3,7 @@
     "displayName": "State Control",
     "version": "0.1.0",
     "unity": "2018.4",
-    "author" : {
-      "name" : "Leonid Sheshukov",
-      "email": "realityfamilyteam@yandex.ru"
-    },
+    "author" : "Reality Family",
     "description": "Tool for creating remote control",
     "dependencies": {
       "com.unity.textmeshpro": "2.0.1"
