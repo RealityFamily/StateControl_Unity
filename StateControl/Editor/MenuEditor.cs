@@ -41,6 +41,24 @@ public class MenuEditor : MonoBehaviour
     [MenuItem(MENU_ITEM_NEW_STATE_LIST, false, 20)]
     static void AddStateObj()
     {
+        SerializedObject tagsManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
+        SerializedProperty tagsProp = tagsManager.FindProperty("tags");
+
+        bool found = false;
+        for (int i = 0; i < tagsProp.arraySize; i++)
+        {
+            SerializedProperty t = tagsProp.GetArrayElementAtIndex(i);
+            if (t.stringValue.Equals("States")) { found = true; break; }
+        }
+
+        if (!found)
+        {
+            tagsProp.InsertArrayElementAtIndex(0);
+            SerializedProperty n = tagsProp.GetArrayElementAtIndex(0);
+            n.stringValue = "States";
+            tagsManager.ApplyModifiedProperties();
+        }
+
         var temp = GameObject.FindGameObjectWithTag("States");
 
         if (temp == null)
@@ -49,7 +67,6 @@ public class MenuEditor : MonoBehaviour
             stateObj.name = "States";
             stateObj.tag = "States";
             stateObj.AddComponent<WebConnection>();
-            DontDestroyOnLoad(stateObj);
         } else
         {
             EditorUtility.DisplayDialog("Warning", "State List is already on scene.\nOpen State Editor.", "Ok");
