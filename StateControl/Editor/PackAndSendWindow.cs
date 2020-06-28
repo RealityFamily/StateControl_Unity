@@ -23,6 +23,7 @@ public class PackAndSendWindow : EditorWindow
 
     private void OnFocus()
     {
+        // Get info of States status on server when window got focus
         var states = GameObject.FindGameObjectWithTag("States");
         if (states != null)
         {
@@ -32,6 +33,7 @@ public class PackAndSendWindow : EditorWindow
         }
     }
 
+    // Get iinfo from server about State status
     private async void reloadServerInfo()
     {
         HttpClient client = new HttpClient();
@@ -54,6 +56,7 @@ public class PackAndSendWindow : EditorWindow
 
     private void OnGUI()
     {
+        // Find Status object
         if (_webConnection != null)
         {
             DrawPackAndSend();
@@ -71,16 +74,19 @@ public class PackAndSendWindow : EditorWindow
 
     private async void DrawPackAndSend()
     {
+        // Scroll zone if content would be higher than window hight
         _statesScroll = EditorGUILayout.BeginScrollView(_statesScroll, GUILayout.ExpandHeight(false));
 
         GUILayout.Label("Version on the server:", EditorStyles.boldLabel);
         EditorGUI.indentLevel++;
 
+        // Field of presentation States for this App on Server
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(EditorGUI.indentLevel * 30);
         GUILayout.Label("Already loaded on the server:  " + (serverStatus ? "Yes" : "No"), GUILayout.ExpandWidth(false));
         EditorGUILayout.EndHorizontal();
 
+        // Show States on server if it has them for this app
         if (serverStatus) {
             EditorGUILayout.BeginHorizontal();
             GUILayout.Space(EditorGUI.indentLevel * 15);
@@ -104,19 +110,23 @@ public class PackAndSendWindow : EditorWindow
 
         GUILayout.Space(40);
 
+        // Block with current local information fron State object
         GUILayout.Label("Pack and Send to the server:", EditorStyles.boldLabel);
         EditorGUI.indentLevel = 1;
 
+        // App name field
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(EditorGUI.indentLevel * 30);
         GUILayout.Label("Application name:  " + _webConnection.GameName);
         EditorGUILayout.EndHorizontal();
 
+        // Server URL field
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(EditorGUI.indentLevel * 30);
         GUILayout.Label("Send to:  http://" + _webConnection.BaseURL + "/");
         EditorGUILayout.EndHorizontal();
 
+        // Local States field
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(EditorGUI.indentLevel * 15);
         statesOpend = EditorGUILayout.Foldout(statesOpend, "States:", true);
@@ -139,9 +149,13 @@ public class PackAndSendWindow : EditorWindow
         EditorGUILayout.EndScrollView();
         GUILayout.Space(20);
 
+        // Check that local and server data are different
         if (!CheckUniq()) {
+
+            //if yes, draw Pack and send button
             if (Buttons.PackAndSend())
             {
+                // Pack States and other info to JSON
                 List<string> states = new List<string>();
                 for (int i = 0; i < _webConnection.GetLenght(); i++)
                 {
@@ -154,6 +168,7 @@ public class PackAndSendWindow : EditorWindow
                     statesList = states
                 });
 
+                // And send to server
                 HttpClient client = new HttpClient();
 
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "http://" + _webConnection.BaseURL + "/api/add_states/add");
@@ -166,6 +181,7 @@ public class PackAndSendWindow : EditorWindow
             }
         } else
         {
+            // if not, draw "All up to date!" phrase
             GUIStyle style = new GUIStyle();
             style.normal.textColor = Color.green;
             style.fontSize = 17;
@@ -175,6 +191,7 @@ public class PackAndSendWindow : EditorWindow
         }
     }
 
+    // check that States on server are differ from States on plugin
     private bool CheckUniq()
     {
         List<string> states = new List<string>();

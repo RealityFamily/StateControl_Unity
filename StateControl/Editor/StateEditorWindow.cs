@@ -17,11 +17,13 @@ public class StateEditorWindow : EditorWindow
 
     private void OnGUI()
     {
+        // Find State object
         var states = GameObject.FindGameObjectWithTag("States");
         
 
         if (states != null)
         {
+            // Open editor window if found
             _webConnection = states.GetComponent<WebConnection>();
             DrawStateEditor();
 
@@ -31,6 +33,7 @@ public class StateEditorWindow : EditorWindow
             }
         } else
         {
+            // open warning window if not
             DrawStateListError();
         }
     }
@@ -42,23 +45,26 @@ public class StateEditorWindow : EditorWindow
 
     private void DrawStateEditor()
     {
-        //if (EditorApplication.isPlaying) return;
+        if (EditorApplication.isPlaying) return;
 
-        // Draw App Name
+        // Field for App Name
         GUILayout.Label("Application name:", EditorStyles.boldLabel);
         _webConnection.GameName = EditorGUILayout.TextField(_webConnection.GameName);
 
         EditorGUILayout.Space();
 
+        // Field for server URL
         GUILayout.Label("Server URL (without protocol):");
         _webConnection.BaseURL = EditorGUILayout.TextField(_webConnection.BaseURL);
 
         EditorGUILayout.Space();
 
+        // States list
         statesOpend = EditorGUILayout.Foldout(statesOpend, "States:", true);
         EditorGUI.indentLevel++;
         if (statesOpend)
         {
+            // Scroll part if it gets higher, than window hight
             _statesScroll = EditorGUILayout.BeginScrollView(_statesScroll);
 
             for (int i = 0; i < _webConnection.GetLenght(); i++)
@@ -66,10 +72,13 @@ public class StateEditorWindow : EditorWindow
                 EditorGUILayout.BeginHorizontal();
                 GUILayout.Space(EditorGUI.indentLevel * 30);
 
+                // State number
                 GUILayout.Label((i + 1).ToString() + ".", GUILayout.Width(15));
 
+                // State name with renaming logic
                 string key = _webConnection.GetKey(i);
                 var _newKey = EditorGUILayout.TextField(key);
+                // Check that object doesn't have State with this name
                 if (_newKey != _webConnection.GetKey(i))
                 {
                     if (!_webConnection.ContainsKey(_newKey)) {
@@ -81,6 +90,7 @@ public class StateEditorWindow : EditorWindow
                     }
                 }
 
+                // delete button
                 if (Buttons.Delete())
                 {
                     _webConnection.Remove(key);
@@ -91,8 +101,11 @@ public class StateEditorWindow : EditorWindow
 
             EditorGUILayout.BeginHorizontal();
             GUILayout.Space(EditorGUI.indentLevel * 30);
+
+            // Add button
             if (Buttons.Add())
             {
+                // Check that object doesn't have State with empty name
                 if (!_webConnection.ContainsKey("")) {
                     _webConnection.Add("");
                     _errorMessage = "";
@@ -105,6 +118,7 @@ public class StateEditorWindow : EditorWindow
 
             if (!string.IsNullOrEmpty(_errorMessage))
             {
+                // throw warning
                 EditorGUILayout.HelpBox(_errorMessage, MessageType.Error);
             }
 

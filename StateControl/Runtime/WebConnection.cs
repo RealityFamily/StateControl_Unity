@@ -19,6 +19,7 @@ public class WebConnection : MonoBehaviour
 
     private void Awake()
     {
+        // create empty delegates to list of States names
         Values.Clear();
         foreach (var key in Keys)
         {
@@ -29,11 +30,13 @@ public class WebConnection : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     { 
+        // Connect to server via WebSocket
         if (!string.IsNullOrWhiteSpace(BaseURL)) {
             ws = new WebSocket("ws://" + BaseURL + "/GameControl");
             ws.OnMessage += Ws_OnMessage;
             ws.Connect();
 
+            // and send started app name
             ws.Send(JsonConvert.SerializeObject(new
             {
                 Game = GameName
@@ -43,20 +46,25 @@ public class WebConnection : MonoBehaviour
 
     private void OnDestroy()
     {
+        // Close connection when game stops
         ws.Close();
     }
 
+    // Get and check messages from WebSocket
     private void Ws_OnMessage(object sender, MessageEventArgs e)
     {
         var json = JObject.Parse(e.Data.ToString());
+        // Check that message has at least one of needed types 
         if (json.ContainsKey("DeviceSession") && json.ContainsKey("GameName") && json.ContainsKey("State"))
         {
+            // if it is message with state, start invoke this delegate
             if (DeviceSession == json["DeviceSession"].ToString() && GameName == json["GameName"].ToString())
             {
                 InvokeDelegate(json["State"].ToString());
             }
         } else if (json.ContainsKey("DeviceSession"))
         {
+            // if it is deviceSession info, save it
             DeviceSession = json["DeviceSession"].ToString();
         }
     }
@@ -64,6 +72,7 @@ public class WebConnection : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // invoke delegates in their queue in main thread
         lock (_executionQueue)
         {
             while (_executionQueue.Count > 0)
@@ -73,15 +82,10 @@ public class WebConnection : MonoBehaviour
         }
     }
 
-    private void OnOpenHandler(object sender, EventArgs e)
-    {
-        Debug.Log("WebSocket connected!");
-    }
 
 
 
-
-
+    // Custom Map/Dictionary structure for saving States name and their delegates
     [SerializeField]
     private List<string> Keys = new List<string>();
     private List<StateDelegate> Values = new List<StateDelegate>();
