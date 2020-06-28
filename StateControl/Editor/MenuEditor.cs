@@ -13,6 +13,25 @@ public class MenuEditor : MonoBehaviour
     private const string MENU_ITEM_NEW_STATE_LIST = GROUP_NAME + "/Add States";
     private const string MENU_ITEM_BUILD_AND_SEND = GROUP_NAME + "/Pack and send";
 
+    private void Awake()
+    {
+        SerializedProperty tagsProp = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]).FindProperty("tags");
+
+        bool found = false;
+        for (int i = 0; i < tagsProp.arraySize; i++)
+        {
+            SerializedProperty t = tagsProp.GetArrayElementAtIndex(i);
+            if (t.stringValue.Equals("States")) { found = true; break; }
+        }
+
+        if (!found)
+        {
+            tagsProp.InsertArrayElementAtIndex(0);
+            SerializedProperty n = tagsProp.GetArrayElementAtIndex(0);
+            n.stringValue = "States";
+        }
+    }
+
     [MenuItem(MENU_ITEM_STATE_EDITOR, false, 0)]
     static void OpenStateUI()
     {
