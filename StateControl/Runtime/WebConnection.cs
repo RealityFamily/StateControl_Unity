@@ -46,8 +46,10 @@ public class WebConnection : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Close connection when game stops
-        ws.Close();
+        if (ws != null) {
+            // Close connection when game stops
+            ws.Close();
+        }
     }
 
     // Get and check messages from WebSocket
